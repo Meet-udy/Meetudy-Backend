@@ -108,7 +108,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2024-12-25 ~ 2025-02-31")
                 .maxParticipants(5)
                 .isOnline(true)
-                .method("온라인으로 진행하며, 각자 코드를 깃허브에 올려 코드 리뷰를 진행합니다.")
                 .category(StudyCategory.PROGRAMMING)
                 .location(Location.OTHERS)
                 .build();
@@ -119,7 +118,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2024-12-25 ~ 2025-02-31")
                 .maxParticipants(5)
                 .isOnline(true)
-                .method("온라인으로 진행합니다.")
                 .category(StudyCategory.LANGUAGE)
                 .location(Location.GYEONGGIDO)
                 .build();
@@ -130,7 +128,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2024-12-25 ~ 2025-02-31")
                 .maxParticipants(5)
                 .isOnline(false)
-                .method("오프라인으로 경기도 스터디 카페에서 진행합니다.")
                 .category(StudyCategory.CERTIFICATION)
                 .location(Location.GYEONGGIDO)
                 .build();
@@ -141,7 +138,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2024-12-25 ~ 2025-02-31")
                 .maxParticipants(5)
                 .isOnline(false)
-                .method("오프라인으로 서울 스터디 카페에서 진행합니다.")
                 .category(StudyCategory.CAREER)
                 .location(Location.SEOUL)
                 .build();
@@ -152,7 +148,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2025-03-01 ~ 2025-05-01")
                 .maxParticipants(10)
                 .isOnline(true)
-                .method("온라인 ZOOM으로 진행합니다.")
                 .category(StudyCategory.SOCIAL_SCIENCES)
                 .location(Location.OTHERS)
                 .build();
@@ -163,7 +158,6 @@ public class DataInitializer implements CommandLineRunner {
                 .duration("2025-03-01 ~ 2025-05-01")
                 .maxParticipants(10)
                 .isOnline(true)
-                .method("온라인 ZOOM으로 진행합니다.")
                 .category(StudyCategory.DESIGN)
                 .location(Location.OTHERS)
                 .build();
