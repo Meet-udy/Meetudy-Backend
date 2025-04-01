@@ -14,9 +14,6 @@ public class StudyGroupUpdateDto {
     @Schema(description = "Description of the study group.")
     private String description;
 
-    @Schema(description = "The method or approach used for conducting the study.")
-    private String method;
-
     @Schema(description = "Maximum number of participants.")
     private Integer maxParticipants;
 

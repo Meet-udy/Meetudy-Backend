@@ -46,9 +46,6 @@ public class StudyGroup {
     private Boolean isOnline;
 
     @Column(nullable = false)
-    private String method;
-
-    @Column(nullable = false)
     private Boolean isRecruiting;
 
     @CreatedDate

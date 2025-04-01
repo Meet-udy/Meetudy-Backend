@@ -50,10 +50,6 @@ public class StudyGroupDto {
     @Schema(description = "Maximum number of participants.")
     private Integer maxParticipants;
 
-    @NotBlank
-    @Schema(description = "The method or approach used for conducting the study.")
-    private String method;
-
     @Schema(description = "The recommendation score of the study group, based on matching the user's interests and preferences.",
             example = "4.5")
     private double score;
