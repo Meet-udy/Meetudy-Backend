@@ -4,8 +4,8 @@ import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.global.utils.LeaderAccessValidator;
 import com.api.meetudy.member.entity.Member;
-import com.api.meetudy.study.group.dto.StudyGroupApplicantDto;
 import com.api.meetudy.study.group.dto.StudyGroupDto;
+import com.api.meetudy.study.group.dto.StudyGroupMemberDto;
 import com.api.meetudy.study.group.entity.StudyGroup;
 import com.api.meetudy.study.group.entity.StudyGroupMember;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
@@ -89,15 +89,16 @@ public class GroupManagementService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudyGroupApplicantDto> getJoinRequests(Long groupId, Member member) {
+    public List<StudyGroupMemberDto> getMembersByStatus(Long groupId, GroupMemberStatus status, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
 
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
 
-        List<StudyGroupMember> pendingMembers = groupMemberRepository.findByStudyGroupAndStatus(studyGroup, GroupMemberStatus.REQUESTED);
+        List<StudyGroupMember> members = groupMemberRepository
+                .findByStudyGroupIdAndStatus(groupId, status);
 
-        return studyGroupMapper.toStudyGroupApplicantDtoList(pendingMembers);
+        return studyGroupMapper.toStudyGroupMemberDtoList(members);
     }
 
 }

@@ -2,8 +2,9 @@ package com.api.meetudy.study.group.controller;
 
 import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.global.response.ApiResponse;
-import com.api.meetudy.study.group.dto.StudyGroupApplicantDto;
 import com.api.meetudy.study.group.dto.StudyGroupDto;
+import com.api.meetudy.study.group.dto.StudyGroupMemberDto;
+import com.api.meetudy.study.group.enums.GroupMemberStatus;
 import com.api.meetudy.study.group.service.StudyGroupService;
 import com.api.meetudy.study.group.service.GroupManagementService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,14 +65,6 @@ public class StudyGroupController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
-    @Operation(summary = "스터디 그룹에 대한 가입 요청 조회 API")
-    @GetMapping("/{groupId}/join-requests")
-    public ResponseEntity<ApiResponse<List<StudyGroupApplicantDto>>> getJoinRequests(@PathVariable Long groupId,
-                                                                                     Principal principal) {
-        List<StudyGroupApplicantDto> response = groupManagementService.getJoinRequests(groupId, authenticationService.getCurrentMember(principal));
-        return ResponseEntity.ok(ApiResponse.onSuccess(response));
-    }
-
     @Operation(summary = "사용자가 리더로 있는 스터디 그룹 조회 API")
     @GetMapping("/created-groups")
     public ResponseEntity<ApiResponse<List<StudyGroupDto>>> getCreatedStudyGroups(Principal principal) {
@@ -97,6 +90,15 @@ public class StudyGroupController {
     @GetMapping("/{groupId}")
     public ResponseEntity<ApiResponse<StudyGroupDto>> getStudyGroupById(@PathVariable Long groupId) {
         StudyGroupDto response = studyGroupService.getStudyGroupById(groupId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "특정 스터디 그룹의 멤버 조회 API")
+    @GetMapping("/{groupId}/members")
+    public ResponseEntity<ApiResponse<List<StudyGroupMemberDto>>> getMembersByStatus(@PathVariable Long groupId,
+                                                                                     @RequestParam GroupMemberStatus status,
+                                                                                    Principal principal) {
+        List<StudyGroupMemberDto> response = groupManagementService.getMembersByStatus(groupId, status, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
