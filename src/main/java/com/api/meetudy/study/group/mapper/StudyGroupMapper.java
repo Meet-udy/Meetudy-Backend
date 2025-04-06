@@ -27,6 +27,7 @@ public interface StudyGroupMapper {
     @Mapping(target = "members", ignore = true)
     StudyGroup toStudyGroup(StudyGroupDto dto, Member leader);
 
+    @Mapping(source = "id", target = "groupMemberId")
     @Mapping(source = "member.nickname", target = "nickname")
     @Mapping(source = "member.major", target = "major")
     @Mapping(source = "member.introduction", target = "introduction")

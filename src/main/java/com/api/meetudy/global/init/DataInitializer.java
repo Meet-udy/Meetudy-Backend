@@ -61,6 +61,19 @@ public class DataInitializer implements CommandLineRunner {
                 .roles(List.of("ROLE_USER"))
                 .build();
 
+        Member member3 = Member.builder()
+                .email("test3@naver.com")
+                .username("test12345")
+                .password(passwordEncoder.encode("Test12345!"))
+                .nickname("test3")
+                .major("국어국문학과")
+                .introduction("안녕하세요, 국어국문학과 재학생입니다!")
+                .isOnline(true)
+                .location(Location.GYEONGGIDO)
+                .loginType(LoginType.JWT)
+                .roles(List.of("ROLE_USER"))
+                .build();
+
         Interest interest1 = Interest.builder()
                 .studyCategory(StudyCategory.CERTIFICATION)
                 .build();
@@ -99,6 +112,11 @@ public class DataInitializer implements CommandLineRunner {
 
         MemberInterest memberInterest5 = MemberInterest.builder()
                 .member(member2)
+                .interest(interest4)
+                .build();
+
+        MemberInterest memberInterest6 = MemberInterest.builder()
+                .member(member3)
                 .interest(interest4)
                 .build();
 
@@ -210,11 +228,23 @@ public class DataInitializer implements CommandLineRunner {
                 .studyGroup(studyGroup4)
                 .build();
 
-        memberRepository.saveAll(Arrays.asList(member1, member2));
+        StudyGroupMember groupMember9 = StudyGroupMember.builder()
+                .status(GroupMemberStatus.MEMBER)
+                .member(member3)
+                .studyGroup(studyGroup1)
+                .build();
+
+        StudyGroupMember groupMember10 = StudyGroupMember.builder()
+                .status(GroupMemberStatus.REQUESTED)
+                .member(member3)
+                .studyGroup(studyGroup2)
+                .build();
+
+        memberRepository.saveAll(Arrays.asList(member1, member2, member3));
         interestRepository.saveAll(Arrays.asList(interest1, interest2, interest3, interest4));
-        memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5));
+        memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5, memberInterest6));
         groupRepository.saveAll(Arrays.asList(studyGroup1, studyGroup2, studyGroup3, studyGroup4, studyGroup5, studyGroup6));
-        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8));
+        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10));
     }
 
 }

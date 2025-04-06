@@ -13,8 +13,6 @@ import java.util.Optional;
 @Repository
 public interface GroupMemberRepository extends JpaRepository<StudyGroupMember, Long> {
 
-    List<StudyGroupMember> findByStudyGroupAndStatus(StudyGroup studyGroup, GroupMemberStatus groupMemberStatus);
-
     List<StudyGroupMember> findByMember(Member member);
 
     boolean existsByStudyGroupAndMember(StudyGroup studyGroup, Member member);
