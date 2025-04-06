@@ -10,6 +10,8 @@ import java.util.List;
 @Setter
 public class StudyGroupMemberDto {
 
+    private Long groupMemberId;
+
     private String nickname;
 
     private String major;
