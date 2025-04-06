@@ -13,11 +13,13 @@ import com.api.meetudy.study.group.mapper.StudyGroupMapper;
 import com.api.meetudy.study.group.repository.GroupMemberRepository;
 import com.api.meetudy.study.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GroupManagementService {
@@ -70,7 +72,8 @@ public class GroupManagementService {
         StudyGroup studyGroup = groupMember.getStudyGroup();
 
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
-        groupMemberRepository.delete(groupMember);
+
+        studyGroup.getMembers().remove(groupMember);
 
         return "The join request has been rejected.";
     }
