@@ -97,8 +97,25 @@ public class StudyGroupController {
     @GetMapping("/{groupId}/members")
     public ResponseEntity<ApiResponse<List<StudyGroupMemberDto>>> getMembersByStatus(@PathVariable Long groupId,
                                                                                      @RequestParam GroupMemberStatus status,
-                                                                                    Principal principal) {
+                                                                                     Principal principal) {
         List<StudyGroupMemberDto> response = groupManagementService.getMembersByStatus(groupId, status, authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "리더가 스터디 그룹 멤버 탈퇴시키는 API")
+    @DeleteMapping("/{groupId}/member/{groupMemberId}")
+    public ResponseEntity<ApiResponse<String>> removeMember(@PathVariable Long groupId,
+                                                            @PathVariable Long groupMemberId,
+                                                            Principal principal) {
+        String response = groupManagementService.removeMember(groupId, groupMemberId, authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "스터디 그룹 탈퇴 API")
+    @DeleteMapping("/{groupId}/member")
+    public ResponseEntity<ApiResponse<String>> leaveStudyGroup(@PathVariable Long groupId,
+                                                               Principal principal) {
+        String response = studyGroupService.leaveStudyGroup(groupId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
