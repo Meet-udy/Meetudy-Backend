@@ -95,13 +95,26 @@ public class GroupManagementService {
     public List<StudyGroupMemberDto> getMembersByStatus(Long groupId, GroupMemberStatus status, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
-
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
 
         List<StudyGroupMember> members = groupMemberRepository
                 .findByStudyGroupIdAndStatus(groupId, status);
 
         return studyGroupMapper.toStudyGroupMemberDtoList(members);
+    }
+
+    @Transactional
+    public String removeMember(Long groupId, Long memberId, Member member) {
+        StudyGroup studyGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
+        leaderAccessValidator.checkLeaderAccess(member, studyGroup);
+
+        StudyGroupMember memberToRemove = groupMemberRepository.findByStudyGroupAndMember_Id(studyGroup, memberId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        studyGroup.getMembers().remove(memberToRemove);
+
+        return "Member has been removed.";
     }
 
 }

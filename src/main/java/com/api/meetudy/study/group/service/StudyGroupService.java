@@ -66,4 +66,18 @@ public class StudyGroupService {
         return studyGroupMapper.toStudyGroupDto(studyGroup);
     }
 
+    @Transactional
+    public String leaveStudyGroup(Long groupId, Member member) {
+        StudyGroup studyGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
+
+        StudyGroupMember memberToLeave = groupMemberRepository.findByStudyGroupAndMember_Id(studyGroup, member.getId())
+                .orElseThrow(() -> new CustomException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        studyGroup.getMembers().remove(memberToLeave);
+        groupMemberRepository.delete(memberToLeave);
+
+        return "Leave request submitted successfully.";
+    }
+
 }
