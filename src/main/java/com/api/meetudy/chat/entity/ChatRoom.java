@@ -1,6 +1,7 @@
 package com.api.meetudy.chat.entity;
 
 import com.api.meetudy.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 @Entity
-@ToString
 @Table(name  = "chat_room")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,15 +21,22 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
     private String groupName;
 
     @Column(nullable = false)
     private Boolean isPrivate;
 
+    @Builder.Default
+    @JsonManagedReference
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatRoomMember> members = new HashSet<>();
 
     public void addChatRoomMember(ChatRoomMember member) {
+        if (this.members == null) {
+            this.members = new HashSet<>();
+        }
+
         this.members.add(member);
     }
 
@@ -60,7 +67,9 @@ public class ChatRoom {
                 .build();
 
         for (Member member : members) {
-            chatRoom.addChatRoomMember(ChatRoomMember.of(groupName, chatRoom, member));
+            if (chatRoom.getMembers().stream().noneMatch(m -> m.getMember().equals(member))) {
+                chatRoom.addChatRoomMember(ChatRoomMember.of(groupName, chatRoom, member));
+            }
         }
 
         return chatRoom;
