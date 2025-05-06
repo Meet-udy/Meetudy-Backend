@@ -1,5 +1,11 @@
 package com.api.meetudy.global.init;
 
+import com.api.meetudy.chat.entity.Chat;
+import com.api.meetudy.chat.entity.ChatRoom;
+import com.api.meetudy.chat.entity.ChatRoomMember;
+import com.api.meetudy.chat.enums.MessageType;
+import com.api.meetudy.chat.repository.ChatRepository;
+import com.api.meetudy.chat.repository.ChatRoomRepository;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.member.enums.LoginType;
 import com.api.meetudy.member.repository.MemberRepository;
@@ -32,6 +38,8 @@ public class DataInitializer implements CommandLineRunner {
     private final MemberInterestRepository memberInterestRepository;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final ChatRepository chatRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -240,11 +248,64 @@ public class DataInitializer implements CommandLineRunner {
                 .studyGroup(studyGroup2)
                 .build();
 
+        ChatRoom chatRoom1 = ChatRoom.builder()
+                .groupName("프로그래밍 스터디")
+                .isPrivate(false)
+                .build();
+
+        ChatRoom chatRoom2 = ChatRoom.builder()
+                .groupName(null)
+                .isPrivate(true)
+                .build();
+
+        Chat chat1 = Chat.builder()
+                .message("안녕하세요!")
+                .messageType(MessageType.TALK)
+                .sender(member1)
+                .room(chatRoom1)
+                .build();
+
+        Chat chat2 = Chat.builder()
+                .message("저도 안녕하세요!")
+                .messageType(MessageType.TALK)
+                .sender(member2)
+                .room(chatRoom1)
+                .build();
+
+        Chat chat3 = Chat.builder()
+                .message("넵 안녕하세요!")
+                .messageType(MessageType.TALK)
+                .sender(member3)
+                .room(chatRoom1)
+                .build();
+
+        Chat chat4 = Chat.builder()
+                .message("안녕하세요!")
+                .messageType(MessageType.TALK)
+                .sender(member3)
+                .room(chatRoom2)
+                .build();
+
+        Chat chat5 = Chat.builder()
+                .message("반갑습니다!")
+                .messageType(MessageType.TALK)
+                .sender(member1)
+                .room(chatRoom2)
+                .build();
+
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member1));
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member2));
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member3));
+        chatRoom2.addChatRoomMember(ChatRoomMember.of(member3.getNickname(), chatRoom2, member1));
+        chatRoom2.addChatRoomMember(ChatRoomMember.of(member1.getNickname(), chatRoom2, member3));
+
         memberRepository.saveAll(Arrays.asList(member1, member2, member3));
         interestRepository.saveAll(Arrays.asList(interest1, interest2, interest3, interest4));
         memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5, memberInterest6));
         groupRepository.saveAll(Arrays.asList(studyGroup1, studyGroup2, studyGroup3, studyGroup4, studyGroup5, studyGroup6));
         groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10));
+        chatRoomRepository.saveAll(Arrays.asList(chatRoom1, chatRoom2));
+        chatRepository.saveAll(Arrays.asList(chat1, chat2, chat3, chat4, chat5));
     }
 
 }

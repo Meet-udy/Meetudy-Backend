@@ -8,7 +8,7 @@ public class ChatMessageDto {
 
     private Long roomId;
 
-    private String sender;
+    private Long senderId;
 
     private String message;
 

@@ -122,6 +122,11 @@ public class JwtTokenProvider {
         return (expiration.getTime() - now);
     }
 
+    public String getUsernameFromToken(String accessToken) {
+        Claims claims = extractClaims(accessToken);
+        return claims.getSubject();
+    }
+
     private Claims extractClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()

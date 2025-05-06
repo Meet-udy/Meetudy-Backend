@@ -114,4 +114,11 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.onSuccess(!isNicknameExist));
     }
 
+    @Operation(summary = "로그인한 사용자의 memberId 반환 API")
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<Long>> getCurrentMemberId(Principal principal) {
+        Member member = authenticationService.getCurrentMember(principal);
+        return ResponseEntity.ok(ApiResponse.onSuccess(member.getId()));
+    }
+
 }
