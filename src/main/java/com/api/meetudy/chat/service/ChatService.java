@@ -8,6 +8,7 @@ import com.api.meetudy.chat.entity.Chat;
 import com.api.meetudy.chat.entity.ChatRoom;
 import com.api.meetudy.chat.entity.ChatRoomMember;
 import com.api.meetudy.chat.repository.ChatRepository;
+import com.api.meetudy.chat.repository.ChatRoomMemberRepository;
 import com.api.meetudy.chat.repository.ChatRoomRepository;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
@@ -30,6 +31,7 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final GroupRepository groupRepository;
     private final LeaderAccessValidator leaderAccessValidator;
 
@@ -99,6 +101,24 @@ public class ChatService {
         return chats.stream()
                 .map(chat -> new ChatResponseDto(chat, sender.getId()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public String leaveChatRoom(Long roomId, Member member) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member)
+                .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_MEMBER_NOT_FOUND));
+
+        chatRoom.getMembers().remove(chatRoomMember);
+        chatRoomMemberRepository.delete(chatRoomMember);
+
+        if (chatRoom.getMembers().isEmpty()) {
+            chatRoomRepository.delete(chatRoom);
+        }
+
+        return "You have left the chat room.";
     }
 
 }
