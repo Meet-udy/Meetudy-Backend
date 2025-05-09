@@ -2,7 +2,6 @@ package com.api.meetudy.study.group.entity;
 
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
-import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
 import com.api.meetudy.study.group.enums.Location;
 import com.api.meetudy.study.group.enums.StudyCategory;
@@ -19,7 +18,6 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-@ToString
 @Table(name  = "study_group")
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)

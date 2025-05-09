@@ -90,11 +90,15 @@ public class SecurityConfig {
                                 , "/v2/swagger-config"
                                 , "/swagger-resources/**").permitAll()
                         .requestMatchers("/error/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/members/**").permitAll()
                         .requestMatchers("/oauth2/callback/kakao").permitAll()
                         .requestMatchers("/search/sort").hasRole("USER")
                         .requestMatchers("/search/filter", "/search").permitAll()
                         .requestMatchers("/study-groups/**").hasRole("USER")
+                        .requestMatchers("/chats/**").hasRole("USER")
+                        .requestMatchers("/my-page/**").hasRole("USER")
+                        .requestMatchers("/study/recommendations").hasRole("USER")
                 );
 
         httpSecurity

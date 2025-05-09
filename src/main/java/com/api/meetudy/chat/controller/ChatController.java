@@ -68,4 +68,12 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
+    @Operation(summary = "채팅방 나가기 API")
+    @DeleteMapping("/room/{roomId}")
+    public ResponseEntity<ApiResponse<String>> leaveChatRoom(@PathVariable Long roomId,
+                                                             Principal principal) {
+        String response = chatService.leaveChatRoom(roomId, authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
 }
