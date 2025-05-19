@@ -2,7 +2,6 @@ package com.api.meetudy.chat.service;
 
 import com.api.meetudy.chat.dto.ChatMessageDto;
 import com.api.meetudy.chat.dto.ChatResponseDto;
-import com.api.meetudy.chat.dto.ChatRoomDto;
 import com.api.meetudy.chat.dto.ChatRoomInfoDto;
 import com.api.meetudy.chat.entity.Chat;
 import com.api.meetudy.chat.entity.ChatRoom;
@@ -41,7 +40,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatRoomDto createGroupRoom(Long groupId, Member member) {
+    public String createGroupRoom(Long groupId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
@@ -50,12 +49,14 @@ public class ChatService {
                 .map(StudyGroupMember::getMember)
                 .collect(Collectors.toSet());
 
-        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createGroupRoom(members));
+        if (members.size() < 2) {
+            throw new CustomException(ErrorStatus.INSUFFICIENT_CHAT_MEMBERS);
+        }
 
-        return ChatRoomDto.builder()
-                .roomId(chatRoom.getId())
-                .displayName(chatRoom.getGroupName())
-                .build();
+        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createGroupRoom(members));
+        chatRoom.updateStudyGroup(studyGroup);
+
+        return "Chat room has been successfully created.";
     }
 
     @Transactional(readOnly = true)
@@ -101,6 +102,14 @@ public class ChatService {
         return chats.stream()
                 .map(chat -> new ChatResponseDto(chat, sender.getId()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Long getChatRoomByStudyGroupId(Long groupId) {
+        ChatRoom chatRoom = chatRoomRepository.findByStudyGroup_Id(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
+
+        return chatRoom.getId();
     }
 
     @Transactional
