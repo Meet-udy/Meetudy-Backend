@@ -13,13 +13,11 @@ import com.api.meetudy.study.group.mapper.StudyGroupMapper;
 import com.api.meetudy.study.group.repository.GroupMemberRepository;
 import com.api.meetudy.study.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GroupManagementService {
@@ -79,7 +77,7 @@ public class GroupManagementService {
     }
 
     @Transactional
-    public String closeRecruitment(Long groupId, Member member) {
+    public StudyGroupDto closeRecruitment(Long groupId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
 
@@ -88,7 +86,7 @@ public class GroupManagementService {
         studyGroup.closeRecruitment();
         groupRepository.save(studyGroup);
 
-        return "Recruitment has been closed.";
+        return studyGroupMapper.toStudyGroupDto(studyGroup);
     }
 
     @Transactional(readOnly = true)

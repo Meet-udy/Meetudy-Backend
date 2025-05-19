@@ -1,5 +1,6 @@
 package com.api.meetudy.study.group.entity;
 
+import com.api.meetudy.chat.entity.ChatRoom;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
@@ -60,6 +61,9 @@ public class StudyGroup {
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyGroupMember> members = new ArrayList<>();
+
+    @OneToOne(mappedBy = "studyGroup", fetch = FetchType.LAZY)
+    private ChatRoom chatRoom;
 
     public void closeRecruitment() {
         this.isRecruiting = false;

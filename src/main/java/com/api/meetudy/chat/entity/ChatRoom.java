@@ -1,6 +1,7 @@
 package com.api.meetudy.chat.entity;
 
 import com.api.meetudy.member.entity.Member;
+import com.api.meetudy.study.group.entity.StudyGroup;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,12 +33,20 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatRoomMember> members = new HashSet<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_group_id")
+    private StudyGroup studyGroup;
+
     public void addChatRoomMember(ChatRoomMember member) {
         if (this.members == null) {
             this.members = new HashSet<>();
         }
 
         this.members.add(member);
+    }
+
+    public void updateStudyGroup(StudyGroup studyGroup) {
+        this.studyGroup = studyGroup;
     }
 
     public void updateGroupName(String newName) {

@@ -58,10 +58,10 @@ public class StudyGroupController {
     }
 
     @Operation(summary = "스터디 그룹 인원 모집 완료 API")
-    @PutMapping("/{groupId}/closure")
-    public ResponseEntity<ApiResponse<String>> closeRecruitment(@PathVariable Long groupId,
+    @PatchMapping("/{groupId}/closure")
+    public ResponseEntity<ApiResponse<StudyGroupDto>> closeRecruitment(@PathVariable Long groupId,
                                                                 Principal principal) {
-        String response = groupManagementService.closeRecruitment(groupId, authenticationService.getCurrentMember(principal));
+        StudyGroupDto response = groupManagementService.closeRecruitment(groupId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 

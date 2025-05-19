@@ -248,14 +248,28 @@ public class DataInitializer implements CommandLineRunner {
                 .studyGroup(studyGroup2)
                 .build();
 
+        StudyGroupMember groupMember11 = StudyGroupMember.builder()
+                .status(GroupMemberStatus.MEMBER)
+                .member(member3)
+                .studyGroup(studyGroup1)
+                .build();
+
         ChatRoom chatRoom1 = ChatRoom.builder()
-                .groupName("프로그래밍 스터디")
+                .groupName("코테 스터디")
                 .isPrivate(false)
+                .studyGroup(studyGroup1)
                 .build();
 
         ChatRoom chatRoom2 = ChatRoom.builder()
-                .groupName(null)
-                .isPrivate(true)
+                .groupName("정처기 스터디")
+                .isPrivate(false)
+                .studyGroup(studyGroup3)
+                .build();
+
+        ChatRoom chatRoom3 = ChatRoom.builder()
+                .groupName("취준 스터디")
+                .isPrivate(false)
+                .studyGroup(studyGroup4)
                 .build();
 
         Chat chat1 = Chat.builder()
@@ -293,19 +307,28 @@ public class DataInitializer implements CommandLineRunner {
                 .room(chatRoom2)
                 .build();
 
-        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member1));
-        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member2));
-        chatRoom1.addChatRoomMember(ChatRoomMember.of("프로그래밍 스터디", chatRoom1, member3));
-        chatRoom2.addChatRoomMember(ChatRoomMember.of(member3.getNickname(), chatRoom2, member1));
-        chatRoom2.addChatRoomMember(ChatRoomMember.of(member1.getNickname(), chatRoom2, member3));
+        Chat chat6 = Chat.builder()
+                .message("안녕하세요!")
+                .messageType(MessageType.TALK)
+                .sender(member2)
+                .room(chatRoom2)
+                .build();
+
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("코테 스터디", chatRoom1, member1));
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("코테 스터디", chatRoom1, member2));
+        chatRoom1.addChatRoomMember(ChatRoomMember.of("코테 스터디", chatRoom1, member3));
+        chatRoom2.addChatRoomMember(ChatRoomMember.of("정처기 스터디", chatRoom2, member1));
+        chatRoom2.addChatRoomMember(ChatRoomMember.of("정처기 스터디", chatRoom2, member3));
+        chatRoom3.addChatRoomMember(ChatRoomMember.of("취준 스터디", chatRoom2, member1));
+        chatRoom3.addChatRoomMember(ChatRoomMember.of("취준 스터디", chatRoom2, member2));
 
         memberRepository.saveAll(Arrays.asList(member1, member2, member3));
         interestRepository.saveAll(Arrays.asList(interest1, interest2, interest3, interest4));
         memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5, memberInterest6));
         groupRepository.saveAll(Arrays.asList(studyGroup1, studyGroup2, studyGroup3, studyGroup4, studyGroup5, studyGroup6));
-        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10));
-        chatRoomRepository.saveAll(Arrays.asList(chatRoom1, chatRoom2));
-        chatRepository.saveAll(Arrays.asList(chat1, chat2, chat3, chat4, chat5));
+        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10, groupMember11));
+        chatRoomRepository.saveAll(Arrays.asList(chatRoom1, chatRoom2, chatRoom3));
+        chatRepository.saveAll(Arrays.asList(chat1, chat2, chat3, chat4, chat5, chat6));
     }
 
 }
