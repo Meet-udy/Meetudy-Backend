@@ -36,6 +36,7 @@ public enum ErrorStatus {
     // Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT500", "The chat room not found."),
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT501", "The chat room member not found."),
+    INSUFFICIENT_CHAT_MEMBERS(HttpStatus.BAD_REQUEST, "CHAT502", "At least two members are required to create a chat room."),
     ;
 
 
