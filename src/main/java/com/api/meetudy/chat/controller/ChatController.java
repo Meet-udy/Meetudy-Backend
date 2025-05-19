@@ -34,8 +34,8 @@ public class ChatController {
 
     @Operation(summary = "그룹 채팅방 생성 API")
     @PostMapping("/room/group/{groupId}")
-    public ResponseEntity<ApiResponse<ChatRoomDto>> createGroupRoom(@PathVariable Long groupId, Principal principal) {
-        ChatRoomDto response = chatService.createGroupRoom(groupId, authenticationService.getCurrentMember(principal));
+    public ResponseEntity<ApiResponse<String>> createGroupRoom(@PathVariable Long groupId, Principal principal) {
+        String response = chatService.createGroupRoom(groupId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
@@ -43,6 +43,13 @@ public class ChatController {
     @GetMapping("/rooms")
     public ResponseEntity<ApiResponse<List<ChatRoomInfoDto>>> getChatRoomInfo(Principal principal) {
         List<ChatRoomInfoDto> response = chatService.getChatRoomInfo(authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "채팅방 id 조회 API")
+    @GetMapping("/room/group/{groupId}")
+    public ResponseEntity<ApiResponse<Long>> getChatRoomByGroupId(@PathVariable Long groupId) {
+        Long response = chatService.getChatRoomByStudyGroupId(groupId);
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
