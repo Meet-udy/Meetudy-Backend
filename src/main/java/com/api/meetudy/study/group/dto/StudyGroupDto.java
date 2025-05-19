@@ -50,11 +50,15 @@ public class StudyGroupDto {
     @Schema(description = "Maximum number of participants.")
     private Integer maxParticipants;
 
+    @Schema(description = "Whether the study group is currently recruiting.")
+    private Boolean isRecruiting;
+
+    @Schema(description = "The creation timestamp of the study group.")
+    private LocalDateTime createdAt;
+
     @Schema(description = "The recommendation score of the study group, based on matching the user's interests and preferences.",
             example = "4.5")
     private double score;
 
-    @Schema(description = "The creation timestamp of the study group.")
-    private LocalDateTime createdAt;
 
 }
