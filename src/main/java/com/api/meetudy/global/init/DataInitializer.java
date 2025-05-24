@@ -254,6 +254,12 @@ public class DataInitializer implements CommandLineRunner {
                 .studyGroup(studyGroup1)
                 .build();
 
+        StudyGroupMember groupMember12 = StudyGroupMember.builder()
+                .status(GroupMemberStatus.LEADER)
+                .member(member3)
+                .studyGroup(studyGroup6)
+                .build();
+
         ChatRoom chatRoom1 = ChatRoom.builder()
                 .groupName("코테 스터디")
                 .isPrivate(false)
@@ -326,7 +332,7 @@ public class DataInitializer implements CommandLineRunner {
         interestRepository.saveAll(Arrays.asList(interest1, interest2, interest3, interest4));
         memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5, memberInterest6));
         groupRepository.saveAll(Arrays.asList(studyGroup1, studyGroup2, studyGroup3, studyGroup4, studyGroup5, studyGroup6));
-        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10, groupMember11));
+        groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10, groupMember11, groupMember12));
         chatRoomRepository.saveAll(Arrays.asList(chatRoom1, chatRoom2, chatRoom3));
         chatRepository.saveAll(Arrays.asList(chat1, chat2, chat3, chat4, chat5, chat6));
     }

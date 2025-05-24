@@ -2,7 +2,6 @@ package com.api.meetudy.chat.controller;
 
 import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.chat.dto.*;
-import com.api.meetudy.chat.entity.ChatRoom;
 import com.api.meetudy.chat.service.ChatService;
 import com.api.meetudy.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +25,9 @@ public class ChatController {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Operation(summary = "개인 채팅방 생성 API")
-    @PostMapping("/room/private")
-    public ResponseEntity<ApiResponse<ChatRoom>> createPrivateRoom(@RequestBody ChatRoomRequestDto dto) {
-        ChatRoom response = chatService.createPrivateRoom(dto.getSender(), dto.getReceiver());
+    @PostMapping("/room/private/{groupId}")
+    public ResponseEntity<ApiResponse<String>> createPrivateRoom(@PathVariable Long groupId, Principal principal) {
+        String response = chatService.createPrivateRoom(groupId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
