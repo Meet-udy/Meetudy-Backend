@@ -35,8 +35,14 @@ public class ChatService {
     private final LeaderAccessValidator leaderAccessValidator;
 
     @Transactional
-    public ChatRoom createPrivateRoom(Member sender, Member receiver) {
-        return chatRoomRepository.save(ChatRoom.createPrivateRoom(sender, receiver));
+    public String createPrivateRoom(Long groupId, Member sender) {
+        StudyGroup studyGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
+
+        Member receiver = studyGroup.getLeader().getMember();
+        chatRoomRepository.save(ChatRoom.createPrivateRoom(sender, receiver));
+
+        return "Chat room has been successfully created.";
     }
 
     @Transactional
