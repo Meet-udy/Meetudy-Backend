@@ -32,9 +32,9 @@ public class MemberUpdateDto {
             example = "A passionate software developer.")
     private String introduction;
 
-    @Schema(description = "The URL or path to the user's profile image.",
+    /*@Schema(description = "The URL or path to the user's profile image.",
             example = "https://example.com/profile-images/user123.jpg")
-    private String profileImage;
+    private String profileImage;*/
 
     @Schema(description = "Indicates whether the user is online or offline. The value should be 'true' for online and 'false' for offline.",
             example = "true")
@@ -51,6 +51,6 @@ public class MemberUpdateDto {
     @Size(max = 5)
     @Schema(description = "A list of study categories that the user is interested in. The user can select up to 5 categories.",
             example = "[\"LANGUAGE\", \"CERTIFICATION\"]")
-    private List<StudyCategory> interests;;
+    private List<StudyCategory> interests;
 
 }

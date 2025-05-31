@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/study/recommendations")
+@RequestMapping("/meetudy/recommendations")
 public class RecommendationController {
 
     private final AuthenticationService authenticationService;

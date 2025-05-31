@@ -6,9 +6,14 @@ import com.api.meetudy.chat.entity.ChatRoomMember;
 import com.api.meetudy.chat.enums.MessageType;
 import com.api.meetudy.chat.repository.ChatRepository;
 import com.api.meetudy.chat.repository.ChatRoomRepository;
+import com.api.meetudy.comment.entity.Comment;
+import com.api.meetudy.comment.repository.CommentRepository;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.member.enums.LoginType;
 import com.api.meetudy.member.repository.MemberRepository;
+import com.api.meetudy.post.entity.Post;
+import com.api.meetudy.post.enums.PostCategory;
+import com.api.meetudy.post.repository.PostRepository;
 import com.api.meetudy.study.group.entity.StudyGroup;
 import com.api.meetudy.study.group.entity.StudyGroupMember;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
@@ -40,6 +45,8 @@ public class DataInitializer implements CommandLineRunner {
     private final GroupMemberRepository groupMemberRepository;
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -328,6 +335,39 @@ public class DataInitializer implements CommandLineRunner {
         chatRoom3.addChatRoomMember(ChatRoomMember.of("취준 스터디", chatRoom2, member1));
         chatRoom3.addChatRoomMember(ChatRoomMember.of("취준 스터디", chatRoom2, member2));
 
+        Post post1 = Post.builder()
+                .title("영어 공부 꿀팁")
+                .content("영어 공부 꿀팁 소개합니다.")
+                .postCategory(PostCategory.STUDY_TIP)
+                .author(member1)
+                .build();
+
+        Post post2 = Post.builder()
+                .title("코테 스터디 홍보")
+                .content("코테 스터디 홍보합니다.")
+                .postCategory(PostCategory.STUDY_PROMOTION)
+                .author(member2)
+                .build();
+
+        Post post3 = Post.builder()
+                .title("공모전 팀원 모집")
+                .content("공모전 팀원 모집합니다.")
+                .postCategory(PostCategory.GENERAL)
+                .author(member3)
+                .build();
+
+        Comment comment1 = Comment.builder()
+                .content("감사합니다.")
+                .author(member2)
+                .post(post1)
+                .build();
+
+        Comment comment2 = Comment.builder()
+                .content("팁 감사합니다!")
+                .author(member3)
+                .post(post1)
+                .build();
+
         memberRepository.saveAll(Arrays.asList(member1, member2, member3));
         interestRepository.saveAll(Arrays.asList(interest1, interest2, interest3, interest4));
         memberInterestRepository.saveAll(Arrays.asList(memberInterest1, memberInterest2, memberInterest3, memberInterest4, memberInterest5, memberInterest6));
@@ -335,6 +375,8 @@ public class DataInitializer implements CommandLineRunner {
         groupMemberRepository.saveAll(Arrays.asList(groupMember1, groupMember2, groupMember3, groupMember4, groupMember5, groupMember6, groupMember7, groupMember8, groupMember9, groupMember10, groupMember11, groupMember12));
         chatRoomRepository.saveAll(Arrays.asList(chatRoom1, chatRoom2, chatRoom3));
         chatRepository.saveAll(Arrays.asList(chat1, chat2, chat3, chat4, chat5, chat6));
+        postRepository.saveAll(Arrays.asList(post1, post2, post3));
+        commentRepository.saveAll(Arrays.asList(comment1, comment2));
     }
 
 }
