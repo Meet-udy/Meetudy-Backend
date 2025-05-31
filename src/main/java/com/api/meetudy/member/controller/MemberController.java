@@ -21,7 +21,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/meetudy/members")
 public class MemberController {
 
     private final MemberService memberService;

@@ -16,7 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/my-page")
+@RequestMapping("/meetudy/my-page")
 public class MyPageController {
 
     private final MyPageService myPageService;

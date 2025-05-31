@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/study-groups")
+@RequestMapping("/meetudy/study-groups")
 public class StudyGroupController {
 
     private final AuthenticationService authenticationService;
