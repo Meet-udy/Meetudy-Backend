@@ -37,6 +37,11 @@ public enum ErrorStatus {
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT500", "The chat room not found."),
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT501", "The chat room member not found."),
     INSUFFICIENT_CHAT_MEMBERS(HttpStatus.BAD_REQUEST, "CHAT502", "At least two members are required to create a chat room."),
+
+    // Board
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD600", "Post not found."),
+    WRONG_POST_AUTHOR(HttpStatus.FORBIDDEN, "BOARD601", "Only the author can modify this post."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD602", "Comment not found."),
     ;
 
 
