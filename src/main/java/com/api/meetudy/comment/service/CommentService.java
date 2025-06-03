@@ -1,6 +1,5 @@
 package com.api.meetudy.comment.service;
 
-import com.api.meetudy.comment.dto.CommentDto;
 import com.api.meetudy.comment.dto.CommentRequestDto;
 import com.api.meetudy.comment.entity.Comment;
 import com.api.meetudy.post.entity.Post;
@@ -13,8 +12,6 @@ import com.api.meetudy.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,15 +48,6 @@ public class CommentService {
         commentRepository.delete(comment);
 
         return "Comment has been successfully deleted.";
-    }
-
-    @Transactional(readOnly = true)
-    public List<CommentDto> getCommentsByPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.POST_NOT_FOUND));
-
-        List<Comment> comments = commentRepository.findByPostOrderByCreatedAtAsc(post);
-        return commentMapper.toCommentDtoList(comments);
     }
 
     private Comment findCommentWithAuthorCheck(Long commentId, Long memberId) {

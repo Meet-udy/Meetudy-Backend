@@ -1,13 +1,15 @@
 package com.api.meetudy.comment.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentDto {
 
     @Schema(description = "The unique identifier of the comment.",
@@ -20,10 +22,14 @@ public class CommentDto {
 
     @Schema(description = "Nickname of the comment's author.",
             example = "username")
-    private String authorNickName;
+    private String authorNickname;
 
     @Schema(description = "Timestamp when the comment was created.",
             example = "2025-05-31T14:22:00")
     private LocalDateTime createdAt;
+
+    @Schema(description = "Whether this comment belongs to the currently logged-in user.",
+            example = "true")
+    private boolean isMine;
 
 }

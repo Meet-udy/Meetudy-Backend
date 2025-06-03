@@ -1,15 +1,17 @@
 package com.api.meetudy.post.dto;
 
+import com.api.meetudy.comment.dto.CommentDto;
 import com.api.meetudy.post.enums.PostCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
-public class PostDto {
+public class PostDetailDto {
 
     @Schema(description = "The unique identifier of the post.",
             example = "1")
@@ -18,6 +20,10 @@ public class PostDto {
     @Schema(description = "Title of the post to be created.",
             example = "Looking for study group members.")
     private String title;
+
+    @Schema(description = "Content of the post to be created.",
+            example = "We're starting a Java study group. Join us.")
+    private String content;
 
     @Schema(description = "Category of the post to be created.",
             example = "STUDY_PROMOTION, STUDY_QUESTION")
@@ -31,8 +37,7 @@ public class PostDto {
             example = "2025-05-31T14:22:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "Number of comments on the post.",
-            example = "5")
-    private int commentCount;
+    @Schema(description = "List of comments associated with the post.")
+    private List<CommentDto> comments;
 
 }
