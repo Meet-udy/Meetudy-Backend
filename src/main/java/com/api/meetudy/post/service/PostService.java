@@ -1,5 +1,6 @@
 package com.api.meetudy.post.service;
 
+import com.api.meetudy.post.dto.PostDetailDto;
 import com.api.meetudy.post.dto.PostDto;
 import com.api.meetudy.post.dto.PostRequestDto;
 import com.api.meetudy.post.entity.Post;
@@ -50,6 +51,13 @@ public class PostService {
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAllByOrderByCreatedAtAsc();
         return postMapper.toPostDtoList(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailDto getPostById(Long postId, Member member) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.POST_NOT_FOUND));
+        return postMapper.toPostDetailDtoWithSortedComments(post, member.getId());
     }
 
     @Transactional(readOnly = true)
