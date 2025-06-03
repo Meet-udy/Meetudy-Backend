@@ -19,10 +19,6 @@ public class PostDto {
             example = "Looking for study group members.")
     private String title;
 
-    @Schema(description = "Content of the post to be created.",
-            example = "We're starting a Java study group. Join us.")
-    private String content;
-
     @Schema(description = "Category of the post to be created.",
             example = "STUDY_PROMOTION, STUDY_QUESTION")
     private PostCategory postCategory;
@@ -34,5 +30,9 @@ public class PostDto {
     @Schema(description = "Timestamp when the post was created.",
             example = "2025-05-31T14:22:00")
     private LocalDateTime createdAt;
+
+    @Schema(description = "Number of comments on the post.",
+            example = "5")
+    private int commentCount;
 
 }
