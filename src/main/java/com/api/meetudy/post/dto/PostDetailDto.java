@@ -37,6 +37,10 @@ public class PostDetailDto {
             example = "2025-05-31T14:22:00")
     private LocalDateTime createdAt;
 
+    @Schema(description = "Indicates if the current user is the author of the post.",
+            example = "true")
+    private Boolean isMyPost;
+
     @Schema(description = "List of comments associated with the post.")
     private List<CommentDto> comments;
 
