@@ -21,7 +21,7 @@ public class MemberDto {
 
     private String introduction;
 
-    private String profileImage;
+    // private String profileImage;
 
     private Integer activityScore;
 
