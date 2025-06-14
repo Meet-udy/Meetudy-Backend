@@ -41,14 +41,10 @@ public class StudyGroupService {
     }
 
     @Transactional(readOnly = true)
-    public List<StudyGroupDto> getCreatedStudyGroups(Member member) {
-        List<StudyGroupMember> groupMembers = groupMemberRepository.findByMemberAndStatus(member, GroupMemberStatus.LEADER);
-        return studyGroupMapper.toStudyGroupDtoListFromMembers(groupMembers);
-    }
+    public List<StudyGroupDto> getAllStudyGroupsWithMyStatus(Member member) {
+        List<GroupMemberStatus> statuses = List.of(GroupMemberStatus.LEADER, GroupMemberStatus.MEMBER, GroupMemberStatus.REQUESTED);
+        List<StudyGroupMember> groupMembers = groupMemberRepository.findByMemberAndStatusIn(member, statuses);
 
-    @Transactional(readOnly = true)
-    public List<StudyGroupDto> getJoinedStudyGroups(Member member) {
-        List<StudyGroupMember> groupMembers = groupMemberRepository.findByMemberAndStatus(member, GroupMemberStatus.MEMBER);
         return studyGroupMapper.toStudyGroupDtoListFromMembers(groupMembers);
     }
 

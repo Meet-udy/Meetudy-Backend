@@ -65,17 +65,10 @@ public class StudyGroupController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
-    @Operation(summary = "사용자가 리더로 있는 스터디 그룹 조회 API")
-    @GetMapping("/created-groups")
-    public ResponseEntity<ApiResponse<List<StudyGroupDto>>> getCreatedStudyGroups(Principal principal) {
-        List<StudyGroupDto> response = studyGroupService.getCreatedStudyGroups(authenticationService.getCurrentMember(principal));
-        return ResponseEntity.ok(ApiResponse.onSuccess(response));
-    }
-
-    @Operation(summary = "사용자가 멤버로 있는 스터디 그룹 조회 API")
-    @GetMapping("/joined-groups")
-    public ResponseEntity<ApiResponse<List<StudyGroupDto>>> getJoinedStudyGroups(Principal principal) {
-        List<StudyGroupDto> response = studyGroupService.getJoinedStudyGroups(authenticationService.getCurrentMember(principal));
+    @Operation(summary = "사용자에 대한 모든 스터디 그룹 조회 API")
+    @GetMapping("/my-groups")
+    public ResponseEntity<ApiResponse<List<StudyGroupDto>>> getAllStudyGroupsWithStatus(Principal principal) {
+        List<StudyGroupDto> response = studyGroupService.getAllStudyGroupsWithMyStatus(authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
