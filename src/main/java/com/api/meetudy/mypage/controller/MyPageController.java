@@ -30,7 +30,7 @@ public class MyPageController {
     }
 
     @Operation(summary = "사용자 프로필 수정 API")
-    @PutMapping("/profile")
+    @PatchMapping("/profile")
     public ResponseEntity<ApiResponse<String>> updateMember(@Valid @RequestBody MemberUpdateDto memberUpdateDto,
                                                                Principal principal) {
         String message = myPageService.updateMember(memberUpdateDto, authenticationService.getCurrentMember(principal));

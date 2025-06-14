@@ -1,6 +1,7 @@
 package com.api.meetudy.study.group.dto;
 
 import com.api.meetudy.global.utils.ValidEnum;
+import com.api.meetudy.study.group.enums.GroupMemberStatus;
 import com.api.meetudy.study.group.enums.Location;
 import com.api.meetudy.study.group.enums.StudyCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -56,9 +57,12 @@ public class StudyGroupDto {
     @Schema(description = "The creation timestamp of the study group.")
     private LocalDateTime createdAt;
 
+    @Schema(description = "The user's role in the study group",
+            example = "LEADER, MEMBER")
+    private GroupMemberStatus myRole;
+
     @Schema(description = "The recommendation score of the study group, based on matching the user's interests and preferences.",
             example = "4.5")
     private double score;
-
 
 }

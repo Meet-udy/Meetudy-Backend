@@ -30,6 +30,6 @@ public class CommentDto {
 
     @Schema(description = "Whether this comment belongs to the currently logged-in user.",
             example = "true")
-    private boolean isMine;
+    private boolean isMyComment;
 
 }

@@ -42,6 +42,8 @@ public interface PostMapper {
 
     default PostDetailDto toPostDetailDtoWithSortedComments(Post post, Long currentMemberId) {
         PostDetailDto postDetailDto = toPostDetailDto(post);
+        postDetailDto.setIsMyPost(post.getAuthor().getId().equals(currentMemberId));
+
 
         List<CommentDto> comments = post.getComments().stream()
                 .sorted(Comparator.comparing(Comment::getCreatedAt))
@@ -50,7 +52,7 @@ public interface PostMapper {
                         .content(comment.getContent())
                         .authorNickname(comment.getAuthor().getNickname())
                         .createdAt(comment.getCreatedAt())
-                        .isMine(comment.getAuthor().getId().equals(currentMemberId))
+                        .isMyComment(comment.getAuthor().getId().equals(currentMemberId))
                         .build())
                 .toList();
 

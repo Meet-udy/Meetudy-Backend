@@ -48,8 +48,11 @@ public interface StudyGroupMapper {
 
     default List<StudyGroupDto> toStudyGroupDtoListFromMembers(List<StudyGroupMember> studyGroupMembers) {
         return studyGroupMembers.stream()
-                .map(StudyGroupMember::getStudyGroup)
-                .map(this::toStudyGroupDto)
+                .map(member -> {
+                    StudyGroupDto dto = toStudyGroupDto(member.getStudyGroup());
+                    dto.setMyRole(member.getStatus());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
