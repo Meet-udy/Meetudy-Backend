@@ -8,12 +8,10 @@ import com.api.meetudy.member.dto.MemberDto;
 import com.api.meetudy.member.dto.MemberUpdateDto;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.member.mapper.MemberMapper;
-import com.api.meetudy.study.group.dto.StudyGroupUpdateDto;
 import com.api.meetudy.study.group.entity.StudyGroup;
 import com.api.meetudy.study.group.entity.StudyGroupMember;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
 import com.api.meetudy.study.group.enums.StudyCategory;
-import com.api.meetudy.study.group.mapper.StudyGroupMapper;
 import com.api.meetudy.study.group.repository.GroupMemberRepository;
 import com.api.meetudy.study.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +29,6 @@ public class MyPageService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final MemberMapper memberMapper;
-    private final StudyGroupMapper groupMapper;
     private final InterestService interestService;
     private final LeaderAccessValidator leaderAccessValidator;
     private final PasswordEncoder passwordEncoder;
@@ -62,18 +59,6 @@ public class MyPageService {
         }
 
         return "User information has been updated.";
-    }
-
-    @Transactional
-    public String updateGroupInfo(Long groupId, StudyGroupUpdateDto groupUpdateDto, Member member) {
-        StudyGroup studyGroup = groupRepository.findById(groupId)
-                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
-
-        leaderAccessValidator.checkLeaderAccess(member, studyGroup);
-
-        groupMapper.updateStudyGroupFromDto(groupUpdateDto, studyGroup);
-
-        return "Study group information has been updated.";
     }
 
     @Transactional
