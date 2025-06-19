@@ -32,6 +32,7 @@ public enum ErrorStatus {
     REQUEST_ALREADY_SENT(HttpStatus.BAD_REQUEST, "GROUP403", "Your participation request for this study group has already been sent."),
     NO_SUCH_MEMBER_IN_STUDY_GROUP(HttpStatus.NOT_FOUND, "GROUP404", "The member cannot be found in the study group."),
     CANNOT_LEAVE_THE_GROUP(HttpStatus.BAD_REQUEST, "GROUP405", "Group leader cannot leave the group. Please delegate leadership first."),
+    INVALID_STUDY_CATEGORY(HttpStatus.BAD_REQUEST, "GROUP406", "The study category is invalid."),
 
     // Chat
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT500", "The chat room not found."),
