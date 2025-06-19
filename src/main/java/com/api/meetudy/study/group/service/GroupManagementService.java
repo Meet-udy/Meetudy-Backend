@@ -6,6 +6,7 @@ import com.api.meetudy.global.utils.LeaderAccessValidator;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.study.group.dto.StudyGroupDto;
 import com.api.meetudy.study.group.dto.StudyGroupMemberDto;
+import com.api.meetudy.study.group.dto.StudyGroupUpdateDto;
 import com.api.meetudy.study.group.entity.StudyGroup;
 import com.api.meetudy.study.group.entity.StudyGroupMember;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
@@ -39,6 +40,18 @@ public class GroupManagementService {
         member.updateActivityScore(member.getActivityScore() + 8);
 
         return "Study group has been successfully created.";
+    }
+
+    @Transactional
+    public String updateGroupInfo(Long groupId, StudyGroupUpdateDto groupUpdateDto, Member member) {
+        StudyGroup studyGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
+
+        leaderAccessValidator.checkLeaderAccess(member, studyGroup);
+
+        studyGroupMapper.updateStudyGroupFromDto(groupUpdateDto, studyGroup);
+
+        return "Study group information has been updated.";
     }
 
     @Transactional

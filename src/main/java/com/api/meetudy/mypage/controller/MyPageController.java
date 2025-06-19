@@ -5,7 +5,6 @@ import com.api.meetudy.global.response.ApiResponse;
 import com.api.meetudy.member.dto.MemberDto;
 import com.api.meetudy.member.dto.MemberUpdateDto;
 import com.api.meetudy.mypage.service.MyPageService;
-import com.api.meetudy.study.group.dto.StudyGroupUpdateDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +33,6 @@ public class MyPageController {
     public ResponseEntity<ApiResponse<String>> updateMember(@Valid @RequestBody MemberUpdateDto memberUpdateDto,
                                                                Principal principal) {
         String message = myPageService.updateMember(memberUpdateDto, authenticationService.getCurrentMember(principal));
-        return ResponseEntity.ok(ApiResponse.onSuccess(message));
-    }
-
-    @Operation(summary = "스터디 그룹 정보 수정 API")
-    @PutMapping("/group/{groupId}")
-    public ResponseEntity<ApiResponse<String>> updateGroupInfo(@Valid @RequestBody StudyGroupUpdateDto groupUpdateDto,
-                                                               @PathVariable Long groupId,
-                                                               Principal principal) {
-        String message = myPageService.updateGroupInfo(groupId, groupUpdateDto, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(message));
     }
 

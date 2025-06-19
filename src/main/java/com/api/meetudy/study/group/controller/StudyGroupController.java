@@ -4,6 +4,7 @@ import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.global.response.ApiResponse;
 import com.api.meetudy.study.group.dto.StudyGroupDto;
 import com.api.meetudy.study.group.dto.StudyGroupMemberDto;
+import com.api.meetudy.study.group.dto.StudyGroupUpdateDto;
 import com.api.meetudy.study.group.enums.GroupMemberStatus;
 import com.api.meetudy.study.group.service.StudyGroupService;
 import com.api.meetudy.study.group.service.GroupManagementService;
@@ -39,6 +40,15 @@ public class StudyGroupController {
                                                                 Principal principal) {
         String response = groupManagementService.createStudyGroup(studyGroupDto, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "스터디 그룹 정보 수정 API")
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<ApiResponse<String>> updateGroupInfo(@Valid @RequestBody StudyGroupUpdateDto groupUpdateDto,
+                                                               @PathVariable Long groupId,
+                                                               Principal principal) {
+        String message = groupManagementService.updateGroupInfo(groupId, groupUpdateDto, authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(message));
     }
 
     @Operation(summary = "스터디 그룹 가입 요청 승인 API")
