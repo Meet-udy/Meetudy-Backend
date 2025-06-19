@@ -1,7 +1,7 @@
 package com.api.meetudy.member.entity;
 
 import com.api.meetudy.member.dto.AdditionalInfoDto;
-import com.api.meetudy.study.group.enums.Location;
+import com.api.meetudy.group.enums.Location;
 import com.api.meetudy.interest.entity.Interest;
 import com.api.meetudy.interest.entity.MemberInterest;
 import com.api.meetudy.member.enums.LoginType;

@@ -1,7 +1,7 @@
 package com.api.meetudy.interest.service;
 
 import com.api.meetudy.member.entity.Member;
-import com.api.meetudy.study.group.enums.StudyCategory;
+import com.api.meetudy.group.enums.StudyCategory;
 import com.api.meetudy.interest.entity.Interest;
 import com.api.meetudy.interest.entity.MemberInterest;
 import com.api.meetudy.interest.repository.InterestRepository;

@@ -1,7 +1,7 @@
 package com.api.meetudy.member.dto;
 
-import com.api.meetudy.study.group.enums.Location;
-import com.api.meetudy.study.group.enums.StudyCategory;
+import com.api.meetudy.group.enums.Location;
+import com.api.meetudy.group.enums.StudyCategory;
 import lombok.Getter;
 import lombok.Setter;
 
