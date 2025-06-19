@@ -1,8 +1,8 @@
 package com.api.meetudy.member.dto;
 
 import com.api.meetudy.global.utils.ValidEnum;
-import com.api.meetudy.study.group.enums.Location;
-import com.api.meetudy.study.group.enums.StudyCategory;
+import com.api.meetudy.group.enums.Location;
+import com.api.meetudy.group.enums.StudyCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,7 +1,7 @@
 package com.api.meetudy.chat.entity;
 
 import com.api.meetudy.member.entity.Member;
-import com.api.meetudy.study.group.entity.StudyGroup;
+import com.api.meetudy.group.entity.StudyGroup;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;

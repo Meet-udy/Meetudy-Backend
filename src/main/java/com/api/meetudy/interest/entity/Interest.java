@@ -1,6 +1,6 @@
 package com.api.meetudy.interest.entity;
 
-import com.api.meetudy.study.group.enums.StudyCategory;
+import com.api.meetudy.group.enums.StudyCategory;
 import jakarta.persistence.*;
 import lombok.*;
 

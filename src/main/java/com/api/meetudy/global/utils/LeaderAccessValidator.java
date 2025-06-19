@@ -3,9 +3,9 @@ package com.api.meetudy.global.utils;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.member.entity.Member;
-import com.api.meetudy.study.group.entity.StudyGroup;
-import com.api.meetudy.study.group.entity.StudyGroupMember;
-import com.api.meetudy.study.group.enums.GroupMemberStatus;
+import com.api.meetudy.group.entity.StudyGroup;
+import com.api.meetudy.group.entity.StudyGroupMember;
+import com.api.meetudy.group.enums.GroupMemberStatus;
 import org.springframework.stereotype.Component;
 
 @Component
