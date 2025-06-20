@@ -8,6 +8,7 @@ import com.api.meetudy.group.enums.StudyCategory;
 import com.api.meetudy.group.mapper.StudyGroupMapper;
 import com.api.meetudy.group.repository.GroupRepository;
 import com.api.meetudy.search.dto.AutoCompleteDto;
+import com.api.meetudy.search.utils.KoreanUtils;
 import com.api.meetudy.search.utils.StudyCategoryConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -45,17 +46,24 @@ public class StudyGroupSearchService {
     public AutoCompleteDto getAutoCompleteSuggestions(String query) {
         String key = REDIS_AUTO_COMPLETE_PREFIX + query;
         Object cachedRaw = redisTemplate.opsForValue().get(key);
-
         if (cachedRaw != null) {
             return objectMapper.convertValue(cachedRaw, AutoCompleteDto.class);
         }
 
+        boolean isCompleteHangul = KoreanUtils.isCompleteHangul(query);
+        String queryInitial = KoreanUtils.getInitialConsonants(query);
+
         List<String> matchedCategories = StudyCategoryConverter.getAllKoreanCategoriesExcludingOthers().stream()
-                .filter(kor -> kor.startsWith(query))
+                .filter(kor -> isCompleteHangul
+                        ? kor.startsWith(query)
+                        : KoreanUtils.getInitialConsonants(kor).startsWith(queryInitial))
                 .collect(Collectors.toList());
 
-        List<String> matchedGroupNames = groupRepository.findByNameContainingIgnoreCase(query).stream()
+        List<String> matchedGroupNames = groupRepository.findAll().stream()
                 .map(StudyGroup::getName)
+                .filter(name -> isCompleteHangul
+                        ? name.startsWith(query)
+                        : KoreanUtils.getInitialConsonants(name).startsWith(queryInitial))
                 .collect(Collectors.toList());
 
         AutoCompleteDto result = new AutoCompleteDto(matchedCategories, matchedGroupNames);
