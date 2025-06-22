@@ -43,8 +43,11 @@ public enum ErrorStatus {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD600", "Post not found."),
     WRONG_POST_AUTHOR(HttpStatus.FORBIDDEN, "BOARD601", "Only the author can modify this post."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD602", "Comment not found."),
-    ;
 
+    // Notification
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION400", "Notification not found."),
+    NOTIFICATION_ACCESS_DENIED(HttpStatus.FORBIDDEN, "NOTIFICATION401", "You are not authorized to access this notification."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
