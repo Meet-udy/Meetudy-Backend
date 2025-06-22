@@ -1,6 +1,7 @@
 package com.api.meetudy.search.utils;
 
 public class KoreanUtils {
+
     private static final char[] CHO =
             {'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ',
                     'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ',
@@ -32,4 +33,5 @@ public class KoreanUtils {
     public static boolean isHangulSyllable(char c) {
         return c >= 0xAC00 && c <= 0xD7A3;
     }
+
 }
