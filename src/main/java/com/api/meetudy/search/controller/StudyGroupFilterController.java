@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/meetudy/study-groups/filter")
+@RequestMapping("/meetudy/study-groups")
 public class StudyGroupFilterController {
 
     private final StudyGroupFilterService filterService;
