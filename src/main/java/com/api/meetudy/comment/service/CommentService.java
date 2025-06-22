@@ -2,6 +2,7 @@ package com.api.meetudy.comment.service;
 
 import com.api.meetudy.comment.dto.CommentRequestDto;
 import com.api.meetudy.comment.entity.Comment;
+import com.api.meetudy.notification.service.NotificationService;
 import com.api.meetudy.post.entity.Post;
 import com.api.meetudy.comment.mapper.CommentMapper;
 import com.api.meetudy.comment.repository.CommentRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
 
+    private final NotificationService notificationService;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
@@ -29,6 +31,10 @@ public class CommentService {
         Comment comment = commentMapper.toComment(commentRequestDto, member);
         comment.updatePost(post);
         commentRepository.save(comment);
+
+        if (!member.equals(post.getAuthor())) {
+            notificationService.sendCommentNotification(post.getAuthor(), post.getId(), comment);
+        }
 
         return "Comment has been successfully created.";
     }
