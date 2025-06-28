@@ -1,5 +1,6 @@
 package com.api.meetudy.chat.service;
 
+import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.chat.dto.ChatMessageDto;
 import com.api.meetudy.chat.dto.ChatResponseDto;
 import com.api.meetudy.chat.dto.ChatRoomInfoDto;
@@ -16,7 +17,9 @@ import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.group.entity.StudyGroup;
 import com.api.meetudy.group.entity.StudyGroupMember;
 import com.api.meetudy.group.repository.GroupRepository;
+import com.api.meetudy.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,9 @@ public class ChatService {
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final GroupRepository groupRepository;
     private final LeaderAccessValidator leaderAccessValidator;
+    private final AuthenticationService authenticationService;
+    private final NotificationService notificationService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional
     public String createPrivateRoom(Long groupId, Member sender) {
@@ -93,11 +99,27 @@ public class ChatService {
         }).collect(Collectors.toList());
     }
 
-    @Transactional
-    public Chat saveMessage(ChatMessageDto messageDto, Member sender) {
-        ChatRoom room = chatRoomRepository.findById(messageDto.getRoomId())
+    public void sendChatAndNotify(ChatMessageDto messageDto, String username) {
+        Member sender = authenticationService.getCurrentMemberByUsername(username);
+
+        ChatRoom room = chatRoomRepository.findByIdWithMembers(messageDto.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
+        Chat chat = saveMessage(messageDto, sender, room);
+
+        List<Member> otherMembers = findOtherMembersInRoom(room, sender);
+        for (Member receiver : otherMembers) {
+            notificationService.sendChatNotification(receiver, chat);
+        }
+
+        simpMessagingTemplate.convertAndSend(
+                "/sub/chat/room/" + messageDto.getRoomId(),
+                messageDto
+        );
+    }
+
+    @Transactional
+    public Chat saveMessage(ChatMessageDto messageDto, Member sender, ChatRoom room) {
         Chat chat = Chat.createChat(sender, messageDto.getMessage(), messageDto.getMessageType(), room);
         return chatRepository.save(chat);
     }
@@ -134,6 +156,14 @@ public class ChatService {
         }
 
         return "You have left the chat room.";
+    }
+
+    @Transactional(readOnly = true)
+    public List<Member> findOtherMembersInRoom(ChatRoom room, Member sender) {
+        return room.getMembers().stream()
+                .map(ChatRoomMember::getMember)
+                .filter(member -> !member.getId().equals(sender.getId()))
+                .toList();
     }
 
 }

@@ -37,6 +37,8 @@ public class Notification {
 
     private Long postId;
 
+    private Long chatId;
+
     public void markAsRead() {
         this.isRead = true;
     }

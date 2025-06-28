@@ -23,6 +23,14 @@ public class NotificationDto {
             example = "42")
     private Long postId;
 
+    @Schema(description = "The ID of the chat related to the notification.",
+            example = "42")
+    private Long chatId;
+
+    @Schema(description = "The ID of the chatroom related to the notification.",
+            example = "42")
+    private Long chatRoomId;
+
     @Schema(description = "Indicates whether the notification has been read.",
             example = "false")
     private boolean isRead;
@@ -36,6 +44,20 @@ public class NotificationDto {
                 notification.getId(),
                 notification.getMessage(),
                 notification.getPostId(),
+                notification.getChatId(),
+                null,
+                notification.getIsRead(),
+                notification.getCreatedAt()
+        );
+    }
+
+    public static NotificationDto from(Notification notification, Long chatRoomId) {
+        return new NotificationDto(
+                notification.getId(),
+                notification.getMessage(),
+                notification.getPostId(),
+                notification.getChatId(),
+                chatRoomId,
                 notification.getIsRead(),
                 notification.getCreatedAt()
         );
