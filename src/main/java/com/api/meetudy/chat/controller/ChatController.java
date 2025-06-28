@@ -2,13 +2,15 @@ package com.api.meetudy.chat.controller;
 
 import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.chat.dto.*;
+import com.api.meetudy.chat.entity.ChatRoom;
+import com.api.meetudy.chat.repository.ChatRoomRepository;
 import com.api.meetudy.chat.service.ChatService;
 import com.api.meetudy.global.response.ApiResponse;
+import com.api.meetudy.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final AuthenticationService authenticationService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Operation(summary = "개인 채팅방 생성 API")
     @PostMapping("/room/private/{groupId}")
@@ -58,13 +60,8 @@ public class ChatController {
         Principal principal = headerAccessor.getUser();
         if (principal != null) {
             String username = principal.getName();
-            chatService.saveMessage(messageDto, authenticationService.getCurrentMemberByUsername(username));
+            chatService.sendChatAndNotify(messageDto, username);
         }
-
-        simpMessagingTemplate.convertAndSend(
-                "/sub/chat/room/" + messageDto.getRoomId(),
-                messageDto
-        );
     }
 
     @Operation(summary = "특정 채팅방 메시지 조회 API")
@@ -80,6 +77,21 @@ public class ChatController {
                                                              Principal principal) {
         String response = chatService.leaveChatRoom(roomId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
+
+    @Operation(summary = "채팅에 참여 중인 멤버 닉네임 조회 API")
+    @GetMapping("/room/{roomId}/members")
+    public ResponseEntity<ApiResponse<List<String>>> getOtherMemberNicknames(@PathVariable Long roomId,
+                                                                             Principal principal) {
+        Member currentMember = authenticationService.getCurrentMember(principal);
+        ChatRoom room = chatRoomRepository.findById(roomId).orElse(null);
+
+        List<Member> others = chatService.findOtherMembersInRoom(room, currentMember);
+        List<String> nicknames = others.stream()
+                .map(Member::getNickname)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.onSuccess(nicknames));
     }
 
 }
