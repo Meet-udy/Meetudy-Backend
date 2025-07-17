@@ -11,6 +11,9 @@ import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +25,10 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final CacheManager cacheManager;
 
     @Transactional
+    @CacheEvict(value = "postDetails", key = "#postId")
     public String addComment(Long postId, CommentRequestDto commentRequestDto, Member member) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.POST_NOT_FOUND));
@@ -43,15 +48,29 @@ public class CommentService {
     public String updateComment(Long commentId, CommentRequestDto commentRequestDto, Member member) {
         Comment comment = findCommentWithAuthorCheck(commentId, member.getId());
         comment.updateComment(commentRequestDto.getContent());
-
         commentRepository.save(comment);
+
+        Long postId = comment.getPost().getId();
+
+        Cache cache = cacheManager.getCache("postDetails");
+        if (cache != null && postId != null) {
+            cache.evict(postId);
+        }
+
         return "Comment has been successfully updated.";
     }
 
     @Transactional
     public String deleteComment(Long commentId, Member member) {
         Comment comment = findCommentWithAuthorCheck(commentId, member.getId());
+        Long postId = comment.getPost().getId();
+
         commentRepository.delete(comment);
+
+        Cache cache = cacheManager.getCache("postDetails");
+        if (cache != null && postId != null) {
+            cache.evict(postId);
+        }
 
         return "Comment has been successfully deleted.";
     }

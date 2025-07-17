@@ -32,10 +32,10 @@ public class PostController {
 
     @Operation(summary = "게시글 수정 API")
     @PatchMapping("/{postId}")
-    public ResponseEntity<ApiResponse<String>> updatePost(@PathVariable Long postId,
+    public ResponseEntity<ApiResponse<PostDetailDto>> updatePost(@PathVariable Long postId,
                                                           @Valid @RequestBody PostRequestDto postRequestDto,
                                                           Principal principal) {
-        String response = postService.updatePost(postId, postRequestDto, authenticationService.getCurrentMember(principal));
+        PostDetailDto response = postService.updatePost(postId, postRequestDto, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
