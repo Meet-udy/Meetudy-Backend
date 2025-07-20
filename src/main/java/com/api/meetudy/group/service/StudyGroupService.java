@@ -11,6 +11,8 @@ import com.api.meetudy.group.mapper.StudyGroupMapper;
 import com.api.meetudy.group.repository.GroupMemberRepository;
 import com.api.meetudy.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class StudyGroupService {
     private final StudyGroupMapper studyGroupMapper;
 
     @Transactional
+    @CacheEvict(value = "pendingStudyGroups", key = "#member.id")
     public String requestJoinGroup(Long groupId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -41,6 +44,7 @@ public class StudyGroupService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "myStudyGroups", key = "#member.id")
     public List<StudyGroupDto> getAllStudyGroupsWithMyStatus(Member member) {
         List<GroupMemberStatus> statuses = List.of(GroupMemberStatus.LEADER, GroupMemberStatus.MEMBER, GroupMemberStatus.REQUESTED);
         List<StudyGroupMember> groupMembers = groupMemberRepository.findByMemberAndStatusIn(member, statuses);
@@ -49,12 +53,14 @@ public class StudyGroupService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "pendingStudyGroups", key = "#member.id")
     public List<StudyGroupDto> getPendingStudyGroups(Member member) {
         List<StudyGroupMember> pendingGroupMembers = groupMemberRepository.findByMemberAndStatus(member, GroupMemberStatus.REQUESTED);
         return studyGroupMapper.toStudyGroupDtoListFromMembers(pendingGroupMembers);
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "studyGroupDetail", key = "#groupId")
     public StudyGroupDto getStudyGroupById(Long groupId) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -63,6 +69,7 @@ public class StudyGroupService {
     }
 
     @Transactional
+    @CacheEvict(value = "myStudyGroups", key = "#member.id")
     public String leaveStudyGroup(Long groupId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));

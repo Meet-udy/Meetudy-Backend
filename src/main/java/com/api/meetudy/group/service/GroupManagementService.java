@@ -14,6 +14,10 @@ import com.api.meetudy.group.mapper.StudyGroupMapper;
 import com.api.meetudy.group.repository.GroupMemberRepository;
 import com.api.meetudy.group.repository.GroupRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +31,10 @@ public class GroupManagementService {
     private final GroupMemberRepository groupMemberRepository;
     private final StudyGroupMapper studyGroupMapper;
     private final LeaderAccessValidator leaderAccessValidator;
+    private final CacheManager cacheManager;
 
     @Transactional
+    @CacheEvict(value = {"myStudyGroups"}, key = "#member.id")
     public String createStudyGroup(StudyGroupDto studyGroupDto, Member member) {
         StudyGroup studyGroup = studyGroupMapper.toStudyGroup(studyGroupDto, member);
 
@@ -43,6 +49,7 @@ public class GroupManagementService {
     }
 
     @Transactional
+    @CacheEvict(value = "studyGroupDetail", key = "#groupId")
     public String updateGroupInfo(Long groupId, StudyGroupUpdateDto groupUpdateDto, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -72,6 +79,8 @@ public class GroupManagementService {
         Member groupMember = newMember.getMember();
         groupMember.updateActivityScore(groupMember.getActivityScore() + 5);
 
+        evictJoinRequestCaches(groupMember.getId(), studyGroup.getId());
+
         return "The join request has been approved.";
     }
 
@@ -85,11 +94,13 @@ public class GroupManagementService {
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
 
         studyGroup.getMembers().remove(groupMember);
+        evictJoinRequestCaches(groupMember.getMember().getId(), studyGroup.getId());
 
         return "The join request has been rejected.";
     }
 
     @Transactional
+    @CacheEvict(value = "studyGroupDetail", key = "#groupId")
     public StudyGroupDto closeRecruitment(Long groupId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -103,6 +114,7 @@ public class GroupManagementService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "groupMembers", key = "#groupId + '_' + #status")
     public List<StudyGroupMemberDto> getMembersByStatus(Long groupId, GroupMemberStatus status, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -115,6 +127,10 @@ public class GroupManagementService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "groupMembers", key = "#groupId"),
+            @CacheEvict(value = "myStudyGroups", key = "#memberId")
+    })
     public String removeMember(Long groupId, Long memberId, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
@@ -126,6 +142,12 @@ public class GroupManagementService {
         studyGroup.getMembers().remove(memberToRemove);
 
         return "Member has been removed.";
+    }
+
+    private void evictJoinRequestCaches(Long memberId, Long groupId) {
+        cacheManager.getCache("pendingStudyGroups").evict(memberId);
+        cacheManager.getCache("myStudyGroups").evict(memberId);
+        cacheManager.getCache("groupMembers").evict(groupId + "_REQUESTED");
     }
 
 }
