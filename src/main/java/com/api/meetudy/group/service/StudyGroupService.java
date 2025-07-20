@@ -60,12 +60,21 @@ public class StudyGroupService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = "studyGroupDetail", key = "#groupId")
-    public StudyGroupDto getStudyGroupById(Long groupId) {
+    public StudyGroupDto getStudyGroupById(Long groupId, Member currentUser) {
+        StudyGroupDto studyGroupDto = getCachedStudyGroupDto(groupId);
+
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
 
-        return studyGroupMapper.toStudyGroupDto(studyGroup);
+        studyGroup.getMembers().stream()
+                .filter(member -> member.getMember().getId().equals(currentUser.getId()))
+                .findFirst()
+                .ifPresent(member -> {
+                    GroupMemberStatus status = member.getStatus();
+                    studyGroupDto.setMyRole(status);
+                });
+
+        return studyGroupDto;
     }
 
     @Transactional
@@ -81,6 +90,13 @@ public class StudyGroupService {
         groupMemberRepository.delete(memberToLeave);
 
         return "Leave request submitted successfully.";
+    }
+
+    @Cacheable(value = "studyGroupDetail", key = "#groupId")
+    public StudyGroupDto getCachedStudyGroupDto(Long groupId) {
+        StudyGroup studyGroup = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
+        return studyGroupMapper.toStudyGroupDto(studyGroup);
     }
 
 }
