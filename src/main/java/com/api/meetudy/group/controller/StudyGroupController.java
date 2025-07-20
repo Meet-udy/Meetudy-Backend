@@ -91,8 +91,8 @@ public class StudyGroupController {
 
     @Operation(summary = "특정 스터디 그룹 조회 API")
     @GetMapping("/{groupId}")
-    public ResponseEntity<ApiResponse<StudyGroupDto>> getStudyGroupById(@PathVariable Long groupId) {
-        StudyGroupDto response = studyGroupService.getStudyGroupById(groupId);
+    public ResponseEntity<ApiResponse<StudyGroupDto>> getStudyGroupById(@PathVariable Long groupId, Principal principal) {
+        StudyGroupDto response = studyGroupService.getStudyGroupById(groupId, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
