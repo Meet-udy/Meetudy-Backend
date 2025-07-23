@@ -67,11 +67,12 @@ public class StudyGroupController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
-    @Operation(summary = "스터디 그룹 인원 모집 완료 API")
-    @PatchMapping("/{groupId}/closure")
-    public ResponseEntity<ApiResponse<StudyGroupDto>> closeRecruitment(@PathVariable Long groupId,
-                                                                Principal principal) {
-        StudyGroupDto response = groupManagementService.closeRecruitment(groupId, authenticationService.getCurrentMember(principal));
+    @Operation(summary = "스터디 그룹 모집 상태 변경 API")
+    @PatchMapping("/{groupId}/recruitment")
+    public ResponseEntity<ApiResponse<StudyGroupDto>> updateRecruitmentStatus(@PathVariable Long groupId,
+                                                                              @RequestParam boolean isRecruiting,
+                                                                              Principal principal) {
+        StudyGroupDto response = groupManagementService.updateRecruitmentStatus(groupId, isRecruiting, authenticationService.getCurrentMember(principal));
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
