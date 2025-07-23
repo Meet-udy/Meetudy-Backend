@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 public class GroupManagementService {
@@ -100,15 +101,18 @@ public class GroupManagementService {
     }
 
     @Transactional
-    @CacheEvict(value = "studyGroupDetail", key = "#groupId")
-    public StudyGroupDto closeRecruitment(Long groupId, Member member) {
+    @CacheEvict(value = { "studyGroupDetail", "myStudyGroups"}, key = "#groupId")
+    public StudyGroupDto updateRecruitmentStatus(Long groupId, boolean isRecruiting, Member member) {
         StudyGroup studyGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorStatus.GROUP_NOT_FOUND));
 
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
 
-        studyGroup.closeRecruitment();
-        groupRepository.save(studyGroup);
+        if (isRecruiting) {
+            studyGroup.reopenRecruitment();
+        } else {
+            studyGroup.closeRecruitment();
+        }
 
         return studyGroupMapper.toStudyGroupDto(studyGroup);
     }

@@ -69,6 +69,8 @@ public class StudyGroup {
         this.isRecruiting = false;
     }
 
+    public void reopenRecruitment() { this.isRecruiting = true; }
+
     @PrePersist
     public void prePersist() {
         if (isRecruiting == null) {
