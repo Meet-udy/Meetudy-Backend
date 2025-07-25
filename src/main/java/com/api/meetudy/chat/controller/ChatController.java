@@ -94,4 +94,11 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.onSuccess(nicknames));
     }
 
+    @Operation(summary = "이미 생성된 채팅방 ID 조회 API")
+    @GetMapping("/created-rooms")
+    public ResponseEntity<ApiResponse<List<Long>>> getCreatedGroupIds(Principal principal) {
+        List<Long> createdStudyGroupIds = chatService.getStudyGroupIdsWithChatRoom(authenticationService.getCurrentMember(principal));
+        return ResponseEntity.ok(ApiResponse.onSuccess(createdStudyGroupIds));
+    }
+
 }

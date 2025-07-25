@@ -13,6 +13,8 @@ import com.api.meetudy.chat.repository.ChatRoomRepository;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.global.utils.LeaderAccessValidator;
+import com.api.meetudy.group.enums.GroupMemberStatus;
+import com.api.meetudy.group.repository.GroupMemberRepository;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.group.entity.StudyGroup;
 import com.api.meetudy.group.entity.StudyGroupMember;
@@ -35,6 +37,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final GroupRepository groupRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private final LeaderAccessValidator leaderAccessValidator;
     private final AuthenticationService authenticationService;
     private final NotificationService notificationService;
@@ -58,6 +61,7 @@ public class ChatService {
         leaderAccessValidator.checkLeaderAccess(member, studyGroup);
 
         Set<Member> members = studyGroup.getMembers().stream()
+                .filter(m -> m.getStatus() == GroupMemberStatus.LEADER || m.getStatus() == GroupMemberStatus.MEMBER)
                 .map(StudyGroupMember::getMember)
                 .collect(Collectors.toSet());
 
@@ -65,7 +69,7 @@ public class ChatService {
             throw new CustomException(ErrorStatus.INSUFFICIENT_CHAT_MEMBERS);
         }
 
-        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createGroupRoom(members));
+        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createGroupRoom(members, studyGroup.getName()));
         chatRoom.updateStudyGroup(studyGroup);
 
         return "Chat room has been successfully created.";
@@ -163,6 +167,15 @@ public class ChatService {
         return room.getMembers().stream()
                 .map(ChatRoomMember::getMember)
                 .filter(member -> !member.getId().equals(sender.getId()))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getStudyGroupIdsWithChatRoom(Member member) {
+        return groupMemberRepository.findByMemberAndStatus(member, GroupMemberStatus.LEADER).stream()
+                .map(StudyGroupMember::getStudyGroup)
+                .filter(studyGroup -> studyGroup.getChatRoom() != null)
+                .map(StudyGroup::getId)
                 .toList();
     }
 
