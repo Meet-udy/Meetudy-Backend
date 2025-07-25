@@ -1,5 +1,8 @@
 package com.api.meetudy.group.service;
 
+import com.api.meetudy.chat.entity.ChatRoom;
+import com.api.meetudy.chat.entity.ChatRoomMember;
+import com.api.meetudy.chat.repository.ChatRoomMemberRepository;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.global.utils.LeaderAccessValidator;
@@ -18,6 +21,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +34,11 @@ public class GroupManagementService {
 
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final StudyGroupMapper studyGroupMapper;
     private final LeaderAccessValidator leaderAccessValidator;
     private final CacheManager cacheManager;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Transactional
     @CacheEvict(value = {"myStudyGroups"}, key = "#member.id")
@@ -77,10 +83,27 @@ public class GroupManagementService {
 
         newMember.updateStatus(GroupMemberStatus.MEMBER);
 
-        Member groupMember = newMember.getMember();
-        groupMember.updateActivityScore(groupMember.getActivityScore() + 5);
+        Member approvedMember = newMember.getMember();
+        approvedMember.updateActivityScore(approvedMember.getActivityScore() + 5);
 
-        evictJoinRequestCaches(groupMember.getId(), studyGroup.getId());
+        ChatRoom chatRoom = studyGroup.getChatRoom();
+        if (chatRoom != null) {
+            boolean isAlreadyInRoom = chatRoom.getMembers().stream()
+                    .anyMatch(m -> m.getMember().getId().equals(approvedMember.getId()));
+
+            if (!isAlreadyInRoom) {
+                ChatRoomMember chatRoomMember = ChatRoomMember.of(approvedMember.getNickname(), chatRoom, approvedMember);
+                chatRoom.addChatRoomMember(chatRoomMember);
+                chatRoomMemberRepository.save(chatRoomMember);
+
+                simpMessagingTemplate.convertAndSend(
+                        "/sub/chat/room/" + chatRoom.getId() + "/members",
+                        approvedMember.getNickname()
+                );
+            }
+        }
+
+        evictJoinRequestCaches(approvedMember.getId(), studyGroup.getId());
 
         return "The join request has been approved.";
     }

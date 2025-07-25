@@ -65,11 +65,7 @@ public class ChatRoom {
         return chatRoom;
     }
 
-    public static ChatRoom createGroupRoom(Set<Member> members) {
-        String groupName = members.stream()
-                .map(Member::getNickname)
-                .collect(Collectors.joining(", "));
-
+    public static ChatRoom createGroupRoom(Set<Member> members, String groupName) {
         ChatRoom chatRoom = ChatRoom.builder()
                 .isPrivate(false)
                 .groupName(groupName)
