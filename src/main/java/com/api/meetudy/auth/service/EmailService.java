@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,6 +67,16 @@ public class EmailService {
         return "Verification email sent successfully";
     }
 
+    @Async
+    public void sendVerificationEmailAsync(String sendTo) throws Exception {
+        sendVerificationEmail(sendTo);
+    }
+
+    @Async
+    public void sendPasswordResetEmailAsync(String username, String sendTo) throws Exception {
+        sendPasswordResetEmail(username, sendTo);
+    }
+
     public boolean verifyCode(String email, String code) {
         String storedCode = verificationCodes.get(email);
         Long expiryTime = verificationExpiry.get(email);
@@ -77,6 +88,17 @@ public class EmailService {
         } else {
             return false;
         }
+    }
+
+    @Transactional
+    public void updatePassword(String email, String password) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new CustomException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        String encodedPassword = securityConfig.passwordEncoder().encode(password);
+        member.setPassword(encodedPassword);
+
+        memberRepository.save(member);
     }
 
     private String generateRandomCode() {
@@ -94,17 +116,6 @@ public class EmailService {
     private void storeVerificationCode(String email, String code) {
         verificationCodes.put(email, code);
         verificationExpiry.put(email, System.currentTimeMillis() + EXPIRY_TIME);
-    }
-
-    @Transactional
-    public void updatePassword(String email, String password) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(ErrorStatus.MEMBER_NOT_FOUND));
-
-        String encodedPassword = securityConfig.passwordEncoder().encode(password);
-        member.setPassword(encodedPassword);
-
-        memberRepository.save(member);
     }
 
 }
