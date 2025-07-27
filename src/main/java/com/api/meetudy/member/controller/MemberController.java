@@ -93,8 +93,8 @@ public class MemberController {
     @PostMapping("/password")
     public ResponseEntity<ApiResponse<String>> findPassword(@Valid @RequestBody PasswordFindingDto findingDto) {
         try {
-            String response = emailService.sendPasswordResetEmail(findingDto.getUsername(), findingDto.getEmail());
-            return ResponseEntity.ok(ApiResponse.onSuccess(response));
+            emailService.sendPasswordResetEmailAsync(findingDto.getUsername(), findingDto.getEmail());
+            return ResponseEntity.ok(ApiResponse.onSuccess("Temporary password is being sent"));
         } catch (Exception e) {
             throw new CustomException(ErrorStatus.SEND_EMAIL_FAILED);
         }

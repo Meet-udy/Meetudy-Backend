@@ -26,8 +26,8 @@ public class AuthController {
     @PostMapping("/send/verification")
     public ResponseEntity<ApiResponse<String>> sendVerificationEmail(@Valid @RequestBody EmailDto emailDto) {
         try {
-            String response = emailService.sendVerificationEmail(emailDto.getEmail());
-            return ResponseEntity.ok(ApiResponse.onSuccess(response));
+            emailService.sendVerificationEmailAsync(emailDto.getEmail());
+            return ResponseEntity.ok(ApiResponse.onSuccess("Verification email is being sent"));
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(ErrorStatus.SEND_EMAIL_FAILED);
