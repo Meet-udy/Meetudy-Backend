@@ -54,13 +54,12 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
-    @Operation(summary = "그룹 채팅방 메시지 전송 API")
+    @Operation(summary = "채팅 전송 API")
     @MessageMapping("/message")
-    public void sendMessage(ChatMessageDto messageDto, StompHeaderAccessor headerAccessor) throws Exception {
+    public void sendMessage(ChatMessageDto messageDto, StompHeaderAccessor headerAccessor) {
         Principal principal = headerAccessor.getUser();
         if (principal != null) {
-            String username = principal.getName();
-            chatService.sendChatAndNotify(messageDto, username);
+            chatService.sendChatAndNotify(messageDto, principal.getName());
         }
     }
 

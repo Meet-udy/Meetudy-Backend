@@ -10,7 +10,6 @@ import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.member.repository.MemberRepository;
 import com.api.meetudy.notification.dto.NotificationDto;
 import com.api.meetudy.notification.entity.Notification;
-import com.api.meetudy.notification.mapper.NotificationMapper;
 import com.api.meetudy.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
