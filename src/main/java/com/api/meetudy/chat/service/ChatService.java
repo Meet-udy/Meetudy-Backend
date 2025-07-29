@@ -2,6 +2,7 @@ package com.api.meetudy.chat.service;
 
 import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.chat.dto.ChatMessageDto;
+import com.api.meetudy.chat.dto.ChatPayload;
 import com.api.meetudy.chat.dto.ChatResponseDto;
 import com.api.meetudy.chat.dto.ChatRoomInfoDto;
 import com.api.meetudy.chat.entity.Chat;
@@ -10,6 +11,7 @@ import com.api.meetudy.chat.entity.ChatRoomMember;
 import com.api.meetudy.chat.repository.ChatRepository;
 import com.api.meetudy.chat.repository.ChatRoomMemberRepository;
 import com.api.meetudy.chat.repository.ChatRoomRepository;
+import com.api.meetudy.global.config.RabbitMqConfig;
 import com.api.meetudy.global.response.exception.CustomException;
 import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.global.utils.LeaderAccessValidator;
@@ -19,9 +21,8 @@ import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.group.entity.StudyGroup;
 import com.api.meetudy.group.entity.StudyGroupMember;
 import com.api.meetudy.group.repository.GroupRepository;
-import com.api.meetudy.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +41,7 @@ public class ChatService {
     private final GroupMemberRepository groupMemberRepository;
     private final LeaderAccessValidator leaderAccessValidator;
     private final AuthenticationService authenticationService;
-    private final NotificationService notificationService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @Transactional
     public String createPrivateRoom(Long groupId, Member sender) {
@@ -106,26 +106,18 @@ public class ChatService {
     public void sendChatAndNotify(ChatMessageDto messageDto, String username) {
         Member sender = authenticationService.getCurrentMemberByUsername(username);
 
-        ChatRoom room = chatRoomRepository.findByIdWithMembers(messageDto.getRoomId())
-                .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
-
-        Chat chat = saveMessage(messageDto, sender, room);
-
-        List<Member> otherMembers = findOtherMembersInRoom(room, sender);
-        for (Member receiver : otherMembers) {
-            notificationService.sendChatNotification(receiver, chat);
-        }
-
-        simpMessagingTemplate.convertAndSend(
-                "/sub/chat/room/" + messageDto.getRoomId(),
-                messageDto
+        ChatPayload payload = new ChatPayload(
+                messageDto.getRoomId(),
+                sender.getId(),
+                messageDto.getMessage(),
+                messageDto.getMessageType()
         );
-    }
 
-    @Transactional
-    public Chat saveMessage(ChatMessageDto messageDto, Member sender, ChatRoom room) {
-        Chat chat = Chat.createChat(sender, messageDto.getMessage(), messageDto.getMessageType(), room);
-        return chatRepository.save(chat);
+        rabbitTemplate.convertAndSend(
+                RabbitMqConfig.CHAT_EXCHANGE,
+                RabbitMqConfig.CHAT_ROUTING_KEY,
+                payload
+        );
     }
 
     @Transactional(readOnly = true)
