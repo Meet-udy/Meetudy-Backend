@@ -1,23 +1,22 @@
-package com.api.meetudy;
+package com.api.meetudy.notifiaction;
 
-import com.api.meetudy.chat.dto.ChatPayload;
 import com.api.meetudy.global.config.RabbitMqConfig;
+import com.api.meetudy.notification.dto.NotificationPayloadDto;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class TestMessageListener {
+public class NotificationTestListener {
 
     private final CountDownLatch latch = new CountDownLatch(1);
-    private ChatPayload receivedPayload;
+    private NotificationPayloadDto receivedPayload;
 
-    @RabbitListener(queues = RabbitMqConfig.CHAT_QUEUE)
-    public void receiveMessage(ChatPayload payload) {
+    @RabbitListener(queues = RabbitMqConfig.NOTIFICATION_QUEUE)
+    public void receive(NotificationPayloadDto payload) {
         this.receivedPayload = payload;
-        System.out.println("Received message: " + payload);
+        System.out.println("Received notification: " + payload);
         latch.countDown();
     }
 
@@ -25,7 +24,7 @@ public class TestMessageListener {
         return latch.await(timeout, unit);
     }
 
-    public ChatPayload getReceivedPayload() {
+    public NotificationPayloadDto getReceivedPayload() {
         return receivedPayload;
     }
 

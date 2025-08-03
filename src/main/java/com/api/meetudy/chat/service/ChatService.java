@@ -2,7 +2,7 @@ package com.api.meetudy.chat.service;
 
 import com.api.meetudy.auth.service.AuthenticationService;
 import com.api.meetudy.chat.dto.ChatMessageDto;
-import com.api.meetudy.chat.dto.ChatPayload;
+import com.api.meetudy.chat.dto.ChatPayloadDto;
 import com.api.meetudy.chat.dto.ChatResponseDto;
 import com.api.meetudy.chat.dto.ChatRoomInfoDto;
 import com.api.meetudy.chat.entity.Chat;
@@ -106,7 +106,7 @@ public class ChatService {
     public void sendChatAndNotify(ChatMessageDto messageDto, String username) {
         Member sender = authenticationService.getCurrentMemberByUsername(username);
 
-        ChatPayload payload = new ChatPayload(
+        ChatPayloadDto payload = new ChatPayloadDto(
                 messageDto.getRoomId(),
                 sender.getId(),
                 messageDto.getMessage(),

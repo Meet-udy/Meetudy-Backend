@@ -18,6 +18,9 @@ public class RabbitMqConfig {
     public static final String CHAT_QUEUE = "chat.queue";
     public static final String CHAT_EXCHANGE = "chat.exchange";
     public static final String CHAT_ROUTING_KEY = "chat.routing.key";
+    public static final String NOTIFICATION_QUEUE = "notification.queue";
+    public static final String NOTIFICATION_EXCHANGE = "notification.exchange";
+    public static final String NOTIFICATION_ROUTING_KEY = "notification.routing.key";
 
     @Bean
     public Queue chatQueue() {
@@ -34,6 +37,23 @@ public class RabbitMqConfig {
         return BindingBuilder.bind(chatQueue())
                 .to(chatExchange())
                 .with(CHAT_ROUTING_KEY);
+    }
+
+    @Bean
+    public Queue notificationQueue() {
+        return new Queue(NOTIFICATION_QUEUE, true);
+    }
+
+    @Bean
+    public TopicExchange notificationExchange() {
+        return new TopicExchange(NOTIFICATION_EXCHANGE);
+    }
+
+    @Bean
+    public Binding notificationBinding() {
+        return BindingBuilder.bind(notificationQueue())
+                .to(notificationExchange())
+                .with(NOTIFICATION_ROUTING_KEY);
     }
 
     @Bean

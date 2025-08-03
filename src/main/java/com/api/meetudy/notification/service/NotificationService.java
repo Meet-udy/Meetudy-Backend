@@ -9,7 +9,9 @@ import com.api.meetudy.global.response.status.ErrorStatus;
 import com.api.meetudy.member.entity.Member;
 import com.api.meetudy.member.repository.MemberRepository;
 import com.api.meetudy.notification.dto.NotificationDto;
+import com.api.meetudy.notification.dto.NotificationPayloadDto;
 import com.api.meetudy.notification.entity.Notification;
+import com.api.meetudy.notification.producer.NotificationProducer;
 import com.api.meetudy.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class NotificationService {
     private final MemberRepository memberRepository;
     private final ChatRepository chatRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final NotificationProducer notificationProducer;
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(String token) {
@@ -55,47 +58,38 @@ public class NotificationService {
     public void sendCommentNotification(Member receiver, Long postId, Comment comment) {
         if (receiver == null) return;
 
-        Notification notification = Notification.builder()
-                .receiver(receiver)
+        NotificationPayloadDto payload = NotificationPayloadDto.builder()
+                .receiverId(receiver.getId())
                 .message(comment.getContent())
                 .postId(postId)
-                .isRead(false)
                 .build();
 
-        notificationRepository.save(notification);
-
-        SseEmitter emitter = emitters.get(receiver.getId());
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event()
-                        .name("comment")
-                        .data(NotificationDto.from(notification)));
-            } catch (IOException e) {
-                emitters.remove(receiver.getId());
-            }
-        }
+        notificationProducer.send(payload);
     }
 
     public void sendChatNotification(Member receiver, Chat chat) {
         if (receiver == null || chat == null) return;
 
-        Notification notification = Notification.builder()
-                .receiver(receiver)
+        NotificationPayloadDto payload = NotificationPayloadDto.builder()
+                .receiverId(receiver.getId())
                 .message(chat.getMessage())
                 .chatId(chat.getId())
-                .isRead(false)
                 .build();
 
-        notificationRepository.save(notification);
+        notificationProducer.send(payload);
+    }
 
-        Long chatRoomId = chat.getRoom() != null ? chat.getRoom().getId() : null;
-
+    public void sendSseNotification(Member receiver, Notification notification, Long chatRoomId) {
         SseEmitter emitter = emitters.get(receiver.getId());
         if (emitter != null) {
             try {
+                String eventName = notification.getChatId() != null ? "chat" : "comment";
+                NotificationDto dto = chatRoomId != null
+                        ? NotificationDto.from(notification, chatRoomId)
+                        : NotificationDto.from(notification);
                 emitter.send(SseEmitter.event()
-                        .name("chat")
-                        .data(NotificationDto.from(notification, chatRoomId)));
+                        .name(eventName)
+                        .data(dto));
             } catch (IOException e) {
                 emitters.remove(receiver.getId());
             }

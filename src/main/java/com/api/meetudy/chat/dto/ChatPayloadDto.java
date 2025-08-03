@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatPayload implements Serializable {
+public class ChatPayloadDto implements Serializable {
 
     private Long roomId;
 
