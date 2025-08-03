@@ -1,6 +1,6 @@
-package com.api.meetudy;
+package com.api.meetudy.chat;
 
-import com.api.meetudy.chat.dto.ChatPayload;
+import com.api.meetudy.chat.dto.ChatPayloadDto;
 import com.api.meetudy.chat.enums.MessageType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,29 +14,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class RabbitMqTest {
+public class ChatRabbitMqTest {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private TestMessageListener testMessageListener;
+    private ChatTestListener chatTestListener;
 
     private static final String EXCHANGE = "chat.exchange";
     private static final String ROUTING_KEY = "chat.routing.key";
 
     @Test
     void sendTestMessageAndReceive() throws Exception {
-        ChatPayload payload = new ChatPayload(1L, 1L, "Hello from test", MessageType.TALK);
+        ChatPayloadDto payload = new ChatPayloadDto(1L, 1L, "Hello from test", MessageType.TALK);
 
         rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, payload);
         System.out.println("Sent message: " + payload);
 
-        boolean messageReceived = testMessageListener.awaitMessage(10, TimeUnit.SECONDS);
+        boolean messageReceived = chatTestListener.awaitMessage(10, TimeUnit.SECONDS);
 
         assertTrue(messageReceived, "Message was not received within timeout");
 
-        ChatPayload received = testMessageListener.getReceivedPayload();
+        ChatPayloadDto received = chatTestListener.getReceivedPayload();
         Assertions.assertNotNull(received);
         assertEquals(payload.getMessage(), received.getMessage());
         assertEquals(payload.getRoomId(), received.getRoomId());
