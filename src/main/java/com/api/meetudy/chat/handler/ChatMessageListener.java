@@ -1,7 +1,7 @@
 package com.api.meetudy.chat.handler;
 
 import com.api.meetudy.chat.dto.ChatMessageDto;
-import com.api.meetudy.chat.dto.ChatPayload;
+import com.api.meetudy.chat.dto.ChatPayloadDto;
 import com.api.meetudy.chat.entity.Chat;
 import com.api.meetudy.chat.entity.ChatRoom;
 import com.api.meetudy.chat.entity.ChatRoomMember;
@@ -31,7 +31,7 @@ public class ChatMessageListener {
     private final NotificationService notificationService;
 
     @RabbitListener(queues = RabbitMqConfig.CHAT_QUEUE, containerFactory = "rabbitListenerContainerFactory")
-    public void handleChatMessage(ChatPayload payload) {
+    public void handleChatMessage(ChatPayloadDto payload) {
         ChatRoom room = chatRoomRepository.findByIdWithMembers(payload.getRoomId())
                 .orElseThrow(() -> new CustomException(ErrorStatus.CHAT_ROOM_NOT_FOUND));
 
